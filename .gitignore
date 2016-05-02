@@ -1,0 +1,7 @@
+# Vagrant stuff
+/.vagrant
+
+# Emacs backup files
+*~
+\#*\#
+

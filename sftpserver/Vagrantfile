@@ -1,0 +1,23 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  #Provider config
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--memory", 1024]
+    v.customize ["modifyvm", :id, "--cpus", 2]
+  end
+
+
+  node_id = "sftpserver"
+  config.vm.define node_id do |node|
+  
+      node.vm.box_url = "https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box"
+      node.vm.box = "ubuntu/trusty64"
+      #assign public dhcp address address
+      node.vm.network :public_network
+      node.vm.hostname = "#{node_id}.local"
+      config.vm.provision :shell, :path => "bootstrapper.sh"
+
+  end
+end
