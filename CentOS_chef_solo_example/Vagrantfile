@@ -1,0 +1,18 @@
+
+Vagrant.configure("2") do |config|
+
+  config.ssh.insert_key = false
+
+  config.vm.box = "nrel/CentOS-6.5-x86_64"
+
+  config.vm.provision :shell, inline: 'mkdir -p /tmp/vagrant-chef/cookbooks/nodes'	
+
+  config.vm.provision 'chef_solo' do |chef|
+    chef.custom_config_path = "Vagrantfile.chef"
+    chef.cookbooks_path = 'cookbooks'
+    chef.data_bags_path = 'data_bags'
+    chef.nodes_path = 'nodes'
+    chef.add_recipe 'emacs'
+  end
+
+end
