@@ -1,0 +1,35 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "ldap_server" do |ldap_server|
+    ldap_server.vm.box = "centos/7"
+    ldap_server.vm.network "public_network", bridge: "en0: Wi-Fi (Wireless)",  ip: "192.168.1.10"
+    ldap_server.vm.provision "shell", path: "common_scripts/base.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/install_ldap_server.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/hostfile_adds.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/db.ldif_create.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/monitor.ldif_create.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/copy_sample_config.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/add_cosine_and_nis_schema.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/base.ldif_create.sh"
+    ldap_server.vm.provision "shell", path: "server_scripts/new_user.ldif_create.sh"
+    ldap_server.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "ldap_server"]
+    end
+  end
+
+  config.vm.define "ldap_client" do |ldap_client|
+    ldap_client.vm.box = "centos/7"
+    ldap_client.vm.network "public_network", bridge: "en0: Wi-Fi (Wireless)",  ip: "192.168.1.20"
+    ldap_client.vm.provision "shell", path: "common_scripts/base.sh"
+    ldap_client.vm.provision "shell", path: "client_scripts/hostfile_adds.sh"
+    ldap_client.vm.provision "shell", path: "client_scripts/ldap_client_setup.sh"
+    ldap_client.vm.provision "shell", path: "client_scripts/sshd_config.sh"
+    ldap_client.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "ldap_client"]
+    end
+  end
+end
+
